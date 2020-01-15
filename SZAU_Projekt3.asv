@@ -58,12 +58,12 @@ steps = [0,  0;
         100, 0.1;
         200, 0;
         300, 0.05;
-        400, 0.07;
-        500, -0.01;
-        600, 0.02;
-        700, 0.1;
-        800, -0.03;
-        900, 0.01
+        400, 0.7;
+        500, -0.1;
+        600, 0.2;
+        700, 1;
+        800, 0.3;
+        900, 0.1
         1000, 0];
     
 y_zad = zeros(sim_time,1);
@@ -483,10 +483,11 @@ end
 figure;
 hold on;
 plot(1:length(y_vector),y_vector);
-plot(1:length(y_check_vector),y_check_vector);
+plot(1:length(y_val),y_val);
+plot(1:length(u_val),u_val);
 hold off;
-title(sprintf('PSO mode vs. %s',com_choose));
-legend('y_{PSO}','y_{exp}');
+title('Symulacja modelu neuronowego dla danych ver.');
+legend('y_{mod}','y_{val}','u');
 xlabel('t');
-ylabel('y');
+ylabel('y,u');
 

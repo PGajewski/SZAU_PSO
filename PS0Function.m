@@ -1,9 +1,9 @@
-function [best_position,Jbest_min] = PS0Function(func,n,bird_setp, c1,c2,w)
+function [best_position,Jbest_min] = PS0Function(func,dim,n,bird_setp, c1,c2,w)
 %PSFUNCTION Summary of this function goes here
 %   Detailed explanation goes here
 %n = 50;          % Size of the swarm " no of birds "
 %bird_setp  = 50; % Maximum number of "birds steps"
-dim = 2;          % Dimension of the problem
+%dim = 2;          % Dimension of the problem
 
 %c2 =1.2;          % PSO parameter C1 
 %c1 = 0.12;        % PSO parameter C2 
@@ -62,8 +62,9 @@ current_position = current_position + velocity ;
 
 %% Main Loop
 iter = 0 ;        % Iterations’counter
+best_buffer = NaN* ones(bird_setp,1);
 while  ( iter < bird_setp )
-iter = iter + 1;
+iter = iter + 1
 
 for i = 1:n
 current_fitness(i) = func(current_position(:,i)) ;    
@@ -95,16 +96,19 @@ end
  velocity = w *velocity + c1*(R1.*(local_best_position-current_position)) + c2*(R2.*(globl_best_position-current_position));
  current_position = current_position + velocity; 
   
- 
+best_buffer(iter) = global_best_fitness;
 
  
 x=current_position(1,:);
 y=current_position(2,:);
 
-clf    
+clf
+if dim == 2
     plot(x, y , 'h')   
     axis([-5 5 -5 5]);
-    
+else
+    plot(best_buffer)   
+end
 pause(.2)
 
 
