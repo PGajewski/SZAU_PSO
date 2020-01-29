@@ -1,5 +1,5 @@
 %% PSO in academic problem.
-
+clear all;
 % Himmelblau function
 him_fun = @(x) (x(1)^2+x(2)-11)^2 + (x(1)+x(2)^2-7)^2;
 
@@ -16,17 +16,23 @@ end
 
 figure;
 surf(x1_vector, x2_vector, y_vector);
-
+title('Himmelblau function');
+xlabel('x_1');
+ylabel('x_2');
+zlabel('y');
+minimal = fmincon(him_fun, [0, 0], [], [], [], [], [-5; -5], [5, 5]);
 % PSO made by Wael Korani.
 n = 150;          % Size of the swarm " no of birds "
 bird_setp  = 100; % Maximum number of "birds steps"
 
-c2 =1.4;          % PSO parameter C1 
-c1 = 0.12;        % PSO parameter C2 
-w =0.9;           % pso momentum or inertia
-
+c1 =1.6;          % PSO parameter C1 
+c2 = 1.1;        % PSO parameter C2 
+w =0.1;           % pso momentum or inertia
+figure;
 [best_position,Jbest_min] = PS0Function(him_fun,2,n,bird_setp, c1,c2,w);
-
+title(sprintf('PSO for Himmelblau, c1 = %g, c2 = %g, w = %g', c1, c2, w));
+xlabel('x_1');
+ylabel('x_2');
 %% Process
 global alfa1;
 global alfa2;
@@ -75,6 +81,8 @@ for i=1:sim_time
         end
     end
 end
+
+
 %% PID regulator.
 T = 0.1;
 
@@ -82,11 +90,11 @@ pid_fun = @(x) PIDGoalFun(x,y_zad,T,sim_time);
 
 %PSO params.
 n = 150;          % Size of the swarm " no of birds "
-bird_setp  = 200; % Maximum number of "birds steps"
+bird_setp  = 100; % Maximum number of "birds steps"
 
-c2 =1.4;          % PSO parameter C1 
-c1 = 0.12;        % PSO parameter C2 
-w =0.9;           % pso momentum or inertia
+c1 =1.5;          % PSO parameter C1 
+c2 = 0.5;        % PSO parameter C2 
+w =0.5;           % pso momentum or inertia
 
 [best_coef,Jbest_min] = PS0Function(pid_fun,3,n,bird_setp, c1,c2,w);
 
@@ -94,6 +102,11 @@ w =0.9;           % pso momentum or inertia
 K = best_coef(1);
 Ti = best_coef(2);
 Td = best_coef(3);
+
+% Method engeneer
+%K = 2.5;
+%Ti = 1.3;
+%Td = 0.15;
 
 %Initialization.
 y_vector = zeros(1,sim_time);
@@ -156,17 +169,17 @@ npl_fun = @(x) NPLGoalFun(x,y_zad,sim_time, w10, w1, w20, w2, na, nb, tau);
 
 %PSO params.
 n = 150;          % Size of the swarm " no of birds "
-bird_setp  = 500; % Maximum number of "birds steps"
+bird_setp  = 100; % Maximum number of "birds steps"
 
-c2 =1.4;          % PSO parameter C1 
-c1 = 0.12;        % PSO parameter C2 
-w =0.9;           % pso momentum or inertia
+c2 =1;          % PSO parameter C1 
+c1 = 0.7;        % PSO parameter C2 
+w =0.6;           % pso momentum or inertia
 
 [best_coef,Jbest_min] = PS0Function(npl_fun,3,n,bird_setp, c1,c2,w);
 
 %Check best regulator.
 lambda_limit = 0.01;
-
+x = best_coef;
 lambda = x(1);
 N = round(x(2));
 Nu = round(x(3));
@@ -271,10 +284,10 @@ nn_fun = @(x) NNGoalFun(x, K, na, nb, tau, u_learning, y_learning);
 
 %PSO params.
 n = 150;          % Size of the swarm " no of birds "
-bird_setp  = 500; % Maximum number of "birds steps"
+bird_setp  = 100; % Maximum number of "birds steps"
 
-c2 =1.4;          % PSO parameter C1 
-c1 = 0.12;        % PSO parameter C2 
+c1 =1.4;          % PSO parameter C1 
+c2 = 0.12;        % PSO parameter C2 
 w =0.9;           % pso momentum or inertia
 
 [best_coef,Jbest_min] = PS0Function(nn_fun,K*(nb-tau+1+na)+2+K,n,bird_setp, c1,c2,w);
@@ -341,13 +354,15 @@ title('Symulacja modelu neuronowego dla danych ver.');
 legend('y_{mod}','y_{val}','u');
 xlabel('t');
 ylabel('y,u');
-
+errorr = (y_val-y_vector)*(y_val-y_vector)'
 figure;
 h = scatter(y_val,y_vector,0.1);
 h.Marker='.';
 title('Relacja wyjœcia procesu i modelu, dane ver.');
 xlabel('y_{val}');
 ylabel('y_{mod}');
+
+
 
 %% Compare PSO model with experimental method.
 com_choose = 'PID'; %PID, NPL, NN
